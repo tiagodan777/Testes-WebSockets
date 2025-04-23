@@ -1,3 +1,8 @@
+<?php
+    session_start();
+
+    ob_start();
+?>
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
@@ -7,6 +12,8 @@
 </head>
 <body>
     <h2>Chat</h2>
+
+    <p>Bem-vindo/a: <span id="nome-usuario"><?= $_SESSION['usuario'] ?></span></p>
 
     <label for="mensagem">Nova mensagem:</label>
     <input type="text" name="mensagem" id="mensagem" placeholder="Escreve uma mensagem">
@@ -35,13 +42,15 @@
         const enviar = () => {
             let mensagem = window.document.getElementById('mensagem')
 
+            let nomeUsuario = window.document.getElementById('nome-usuario').textContent
+
             let dados = {
-                mensagem: mensagem.value
+                mensagem: `${nomeUsuario}: ${mensagem.value}`
             }
 
             ws.send(JSON.stringify(dados))
 
-            menssagemChat.insertAdjacentHTML('beforeend', `${mensagem.value} <br>`)
+            menssagemChat.insertAdjacentHTML('beforeend', `${nomeUsuario}: ${mensagem.value} <br>`)
 
             mensagem.value = ''
         }
