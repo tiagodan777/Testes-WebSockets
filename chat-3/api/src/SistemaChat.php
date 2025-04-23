@@ -30,7 +30,9 @@ class SistemaChat implements MessageComponentInterface {
             }
         }
 
-        echo "Utilizador {$from->resourceId} enviou uma mensagem. \n\n";
+        $this->salvarMensagemNoBancoDeDados($msg);
+
+        // echo "Utilizador {$from->resourceId} enviou uma mensagem. \n\n";
     }
 
     public function onClose(ConnectionInterface $conn)
@@ -45,5 +47,25 @@ class SistemaChat implements MessageComponentInterface {
         $conn->close();
 
         echo "Ocorreu um erro: {$e->getMessage()}. \n\n";
+    }
+
+    private function salvarMensagemNoBancoDeDados($mensagem) {
+        $dbConnection = new DbConnection();
+        $conn = $dbConnection->getConnection();
+
+        if ($conn === null) {
+        error_log("Falha na conexão com o banco de dados.");
+        return;
+        }
+
+        $sql = "INSERT INTO mensagens (mensagem) VALUES (:mensagem);";
+
+        $addMensagem = $conn->prepare($sql);
+
+        $mensagemArray = json_decode($mensagem, true);
+
+        $addMensagem->bindParam(':mensagem', $mensagemArray['mensagem']);
+
+        $addMensagem->execute();
     }
 }
