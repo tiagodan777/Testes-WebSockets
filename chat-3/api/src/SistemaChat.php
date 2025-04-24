@@ -58,13 +58,14 @@ class SistemaChat implements MessageComponentInterface {
         return;
         }
 
-        $sql = "INSERT INTO mensagens (mensagem) VALUES (:mensagem);";
+        $sql = "INSERT INTO mensagens (mensagem, usuario_id) VALUES (:mensagem, :usuario_id);";
 
         $addMensagem = $conn->prepare($sql);
 
         $mensagemArray = json_decode($mensagem, true);
 
         $addMensagem->bindParam(':mensagem', $mensagemArray['mensagem']);
+        $addMensagem->bindParam(':usuario_id', $mensagemArray['usuario_id']);
 
         $addMensagem->execute();
     }
